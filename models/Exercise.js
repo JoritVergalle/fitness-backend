@@ -8,7 +8,7 @@ var ExerciseSchema = new mongoose.Schema({
     watt: Number,
     minutes: Number,
     kg: Number,
-    amount: String
+    amount: Number
 });
 
 mongoose.model('exercise', ExerciseSchema);

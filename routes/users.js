@@ -80,4 +80,29 @@ router.delete('/users/:user/exercises/:exercise', function(req, res) {
     });
 });
 
+router.put('/users/:user/exercises/:exercise', function(req, res) {
+    if(req.body.type === 'Cardio') {
+        Exercise.findOneAndUpdate({_id: req.body._id}, {
+            $set: {
+                watt: req.body.watt,
+                minutes: req.body.minutes,
+            }
+        }, function(err, result) {
+            if (err) {return res.send(err)}
+            res.json("Exercise is aangepast");
+        });
+    }
+    else {
+        Exercise.findOneAndUpdate({_id: req.body._id}, {
+            $set: {
+                amount: req.body.amount,
+                kg: req.body.kg,
+            }
+        }, function(err, result) {
+            if (err) {return res.send(err)}
+            res.json("Exercise is aangepast");
+        });
+    }
+});
+
 module.exports = router;
