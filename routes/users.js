@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var passport = require('passport');
+var jwt = require('express-jwt');
 
 var User = mongoose.model('user');
 var Exercise = mongoose.model('exercise');
+
+var auth = jwt({secret: process.env.NOT_A_SECRET, userProperty: 'payload'});
 
 /* GET users listing. */
 // router.get('/', function(req, res, next) {
@@ -15,16 +19,16 @@ var Exercise = mongoose.model('exercise');
 //     }));
 // });
 
-router.post('/users/', function (req, res, next) {
-    var user = new User({
-        name: req.body.name,
-        password: req.body.password,
-    });
-    user.save(function(err, user) {
-        if (err){ return next(err); }
-        res.json(user);
-    });
-});
+// router.post('/users/', function (req, res, next) {
+//     var user = new User({
+//         username: req.body.username,
+//         password: req.body.password,
+//     });
+//     user.save(function(err, user) {
+//         if (err){ return next(err); }
+//         res.json(user);
+//     });
+// });
 
 router.param('user', function(req, res, next, id) {
     var query = User.findById(id);
@@ -103,6 +107,65 @@ router.put('/users/:user/exercises/:exercise', function(req, res) {
             res.json("Exercise is aangepast");
         });
     }
+});
+
+
+router.post('/register', function(req, res, next){
+    if(!req.body.username || !req.body.password){
+        return res.status(400).json({message: 'Please fill out all fields'});
+    }
+    var user = new User();
+    user.username = req.body.username;
+    user.setPassword(req.body.password)
+    user.save(function (err){
+        if(err){ return next(err); }
+        return res.json({token: user.generateJWT()})
+    });
+});
+
+router.post('/login', function(req, res, next){
+    if(!req.body.username || !req.body.password){
+        return res.status(400).json({message: 'Please fill out all fields'});
+    }
+    passport.authenticate('local', function(err, user, info){
+        if(err){ return next(err); }
+        if(user){
+            return res.json({
+                "_id": user._id,
+                "username": user.username,
+                "trainingsSchema": user.trainingsSchema,
+            });
+        } else {
+            return res.status(401).json(info);
+        }
+    })(req, res, next);
+});
+
+
+// router.post('/login', function(req, res, next){
+//     if(!req.body.username || !req.body.password){
+//         return res.status(400).json({message: 'Please fill out all fields'});
+//     }
+//     passport.authenticate('local', function(err, user, info){
+//         if(err){ return next(err); }
+//         if(user){
+//             return res.json({token: user.generateJWT()});
+//         } else {
+//             return res.status(401).json(info);
+//         }
+//     })(req, res, next);
+// });
+
+router.post('/checkusername', function(req, res, next) {
+    // if (req.body.username) {
+    User.find({username: req.body.username}, function(err, result) {
+        if (result.length) {
+            res.json({'username': 'alreadyexists'})
+        } else {
+            res.json({'username': 'ok'})
+        }
+    });
+    // }
 });
 
 module.exports = router;

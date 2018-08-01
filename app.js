@@ -5,15 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var passport = require('passport');
 
 require('./models/User');
 require('./models/Exercise');
+
+require('./config/passport');
 
 var index = require('./routes/index');
 var exercises = require('./routes/exercises');
 var users = require('./routes/users');
 
-mongoose.connect('mongodb://dbuser:dbuser123@ds219100.mlab.com:19100/fitness-db', {  useMongoClient: true });
+mongoose.connect('mongodb://dbuser:dbuser123@ds219100.mlab.com:19100/fitness-db');
 
 var app = express();
 
@@ -28,6 +31,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize());
 
 app.use('/', index);
 app.use('/API', exercises);
