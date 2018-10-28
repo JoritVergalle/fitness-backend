@@ -16,7 +16,7 @@ var index = require('./routes/index');
 var exercises = require('./routes/exercises');
 var users = require('./routes/users');
 
-mongoose.connect('mongodb://dbuser:dbuser123@ds219100.mlab.com:19100/fitness-db');
+mongoose.connect(process.env.MLAB_URL);
 
 var app = express();
 
