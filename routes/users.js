@@ -141,6 +141,12 @@ router.post('/login', function(req, res, next){
     })(req, res, next);
 });
 
+// router.get('/users/:user', function(req, res) {
+//     req.user.populate('trainingsSchema', function(err, user) {
+//         if (err) { return next(err); }
+//         res.json(user);
+//     });
+// });
 
 // router.post('/login', function(req, res, next){
 //     if(!req.body.username || !req.body.password){
