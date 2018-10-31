@@ -6,6 +6,7 @@ var ExerciseSchema = new mongoose.Schema({
     image: String,
     type: {type: String, required: true},
     watt: Number,
+    KMU: Number,
     minutes: Number,
     kg: Number,
     amount: Number
