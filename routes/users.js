@@ -85,7 +85,7 @@ router.delete('/users/:user/exercises/:exercise', function(req, res) {
 });
 
 router.put('/users/:user/exercises/:exercise', function(req, res) {
-    if(req.body.type === 'Cardio') {
+    if(req.body.type === 'CardioWatt') {
         Exercise.findOneAndUpdate({_id: req.body._id}, {
             $set: {
                 watt: req.body.watt,
@@ -96,7 +96,18 @@ router.put('/users/:user/exercises/:exercise', function(req, res) {
             res.json("Exercise is aangepast");
         });
     }
-    else {
+    else if(req.body.type === 'CardioKMU') {
+        Exercise.findOneAndUpdate({_id: req.body._id}, {
+            $set: {
+                KMU: req.body.KMU,
+                minutes: req.body.minutes,
+            }
+        }, function(err, result) {
+            if (err) {return res.send(err)}
+            res.json("Exercise is aangepast");
+        });
+    }
+    else if(req.body.type === 'Power'){
         Exercise.findOneAndUpdate({_id: req.body._id}, {
             $set: {
                 amount: req.body.amount,
